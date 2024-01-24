@@ -1,0 +1,130 @@
+// Define pins for motors and IR sensor
+#define IR_SENSOR_PIN A0
+#define IN1_PIN 7
+#define IN2_PIN 6
+#define IN3_PIN 5
+#define IN4_PIN 4
+#define ENA_PIN 9
+#define ENB_PIN 10
+#define TRIGGER_PIN 12
+#define ECHO_PIN 13
+
+// Define variables for motor speed and direction
+int leftMotorSpeed = 0;
+int rightMotorSpeed = 0;
+int distance = 100;
+
+void setup() {
+  // Initialize motor pins as output
+  pinMode(IN1_PIN, OUTPUT);
+  pinMode(IN2_PIN, OUTPUT);
+  pinMode(IN3_PIN, OUTPUT);
+  pinMode(IN4_PIN, OUTPUT);
+  pinMode(ENA_PIN, OUTPUT);
+  pinMode(ENB_PIN, OUTPUT);
+  pinMode(IR_SENSOR_PIN, INPUT);
+  pinMode(TRIGGER_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+
+  // Initialize serial communication
+  Serial.begin(9600);
+}
+
+void loop() {
+    Serial.println("ir");
+
+  // Read the IR sensor value
+  int sensorValue = analogRead(IR_SENSOR_PIN);
+
+  analogWrite(ENA_PIN, leftMotorSpeed);
+
+  // Control right motor speed
+  analogWrite(ENB_PIN, rightMotorSpeed);
+
+  // Print the sensor value to serial monitor
+  Serial.println(sensorValue);
+
+  digitalWrite(TRIGGER_PIN, LOW);
+  //delayMicroseconds(2);
+  digitalWrite(TRIGGER_PIN, HIGH);
+  //delayMicroseconds(10);
+  digitalWrite(TRIGGER_PIN, LOW);
+  long duration = pulseIn(ECHO_PIN, HIGH);
+  distance = duration * 0.034 / 2;
+  if(distance >=60)
+  {
+    leftMotorSpeed =255;
+    rightMotorSpeed = 255;
+    //analogWrite(ENA_PIN, leftMotorSpeed);
+    //analogWrite(ENB_PIN, rightMotorSpeed);
+
+    // Make the robot turn in place
+    digitalWrite(IN1_PIN, HIGH);
+    digitalWrite(IN2_PIN, LOW);
+    digitalWrite(IN3_PIN, LOW);
+    digitalWrite(IN4_PIN, HIGH);
+    Serial.println(distance);
+    delay(50);
+    
+  }
+
+  // If the sensor detects a black surface
+  /*if (sensorValue > 400/* && distance > 10*/
+    // Set motor speeds to move forward
+    /*leftMotorSpeed = 255;
+    rightMotorSpeed = 255;
+    digitalWrite(IN1_PIN, HIGH);
+    digitalWrite(IN2_PIN, LOW);
+    digitalWrite(IN3_PIN, HIGH);
+    digitalWrite(IN4_PIN, LOW);
+    delay(50);
+    Serial.println(sensorValue);
+    //Serial.println(distance);
+  } 
+  // If the sensor detects a white surface
+  else if (sensorValue < 400 /*&& distance > 10*/
+    // Set motor speeds to rotate
+    /*leftMotorSpeed = 255;
+    rightMotorSpeed = 255;
+    digitalWrite(IN1_PIN, HIGH);
+    digitalWrite(IN2_PIN, LOW);
+    digitalWrite(IN3_PIN, LOW);
+    digitalWrite(IN4_PIN, HIGH);
+    Serial.println(sensorValue);
+    //Serial.println(distance);
+    delay(50);
+  }*/
+  // If an obstacle is detected within 10cm
+  if (distance < 60) {
+    // Stop the motors
+    leftMotorSpeed =255;
+    rightMotorSpeed = 255;
+    //analogWrite(ENA_PIN, leftMotorSpeed);
+    //analogWrite(ENB_PIN, rightMotorSpeed);
+
+    // Make the robot turn in place
+    digitalWrite(IN1_PIN, HIGH);
+    digitalWrite(IN2_PIN, LOW);
+    digitalWrite(IN3_PIN, HIGH);
+    digitalWrite(IN4_PIN, LOW);
+    Serial.println(distance);
+    delay(50);
+    //Serial.println(distance);
+  }
+
+  // Print the sensor values to serial monitor
+ /* Serial.print("IR sensor value: ");
+  Serial.print(sensorValue);
+  Serial.print(" | Ultrasonic sensor distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");*/
+
+  // Delay for a short period
+  delay(10);
+  }
+
+
+
+
+
+  
